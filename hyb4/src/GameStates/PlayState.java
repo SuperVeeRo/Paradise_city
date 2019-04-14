@@ -30,6 +30,8 @@ public class PlayState extends GameState {
 	private int activePlayer ;
 	private int numPlayableCharacters ;
 	
+	private int ordre = 1;
+	
 	// tilemap
 	private TileMap tileMap;
 	
@@ -199,6 +201,13 @@ public class PlayState extends GameState {
 			if(players[activePlayer].intersects(d)) {
 				//hud.setEnergy(100);
 				hud.suggestBed(d.getx(),d.gety(), tileMap.getx(), tileMap.gety());
+				if(players[activePlayer].gety() == d.gety()) {
+					ordre= 2;
+				}
+				else {
+					
+					ordre = 1;
+				}
 			}
 			else {
 				hud.notBed();
@@ -211,6 +220,13 @@ public class PlayState extends GameState {
 			if(players[activePlayer].intersects(d)) {
 				//hud.setEnergy(100);
 				hud.suggestFridge(d.getx(),d.gety(), tileMap.getx(), tileMap.gety());
+				if(players[activePlayer].gety() == d.gety()+32) {
+					ordre= 2;
+				}
+				else {
+					//System.out.println(players[activePlayer].gety()+ "  "+ d.gety());
+					ordre = 1;
+				}
 			}
 			else {
 				hud.notFridge();
@@ -223,22 +239,40 @@ public class PlayState extends GameState {
 		
 		// draw tilemap
 		tileMap.draw(g);
-
-		// draw objects
-		for(Bed d : beds) {
-			d.draw(g);
+		if(ordre == 1) {
+			// draw objects
+			for(Bed d : beds) {
+				d.draw(g);
+			}
+			for(Fridge d : fridges) {
+				d.draw(g);
+			}
+			// draw doors
+			for(Door door : doors) {
+				door.draw(g);
+			}
+			// draw players
+			for (int i=0; i< numPlayableCharacters; i++) {
+				players[i].draw(g);;
+			}
+		}else if(ordre == 2) {
+			for (int i=0; i< numPlayableCharacters; i++) {
+				players[i].draw(g);;
+			}
+			// draw objects
+			for(Bed d : beds) {
+				d.draw(g);
+			}
+			for(Fridge d : fridges) {
+				d.draw(g);
+			}
+			// draw doors
+			for(Door door : doors) {
+				door.draw(g);
+			}
+			// draw players
+			
 		}
-		for(Fridge d : fridges) {
-			d.draw(g);
-		}
-		// draw doors
-		for(Door door : doors) {
-			door.draw(g);
-		}
-		// draw players
-				for (int i=0; i< numPlayableCharacters; i++) {
-					players[i].draw(g);;
-				}
 		
 		// active player gets a red dot on it precise coordinates
 		g.setColor(Color.red);
