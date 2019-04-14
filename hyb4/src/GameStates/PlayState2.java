@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import Entity.Bed;
+import Entity.Fridge;
 import Entity.Player;
 import HUD.Hud;
 import Main.GamePanel;
@@ -39,6 +40,7 @@ public class PlayState2 extends GameState{
 		private int eventTick;
 		
 		private ArrayList<Bed> beds;
+		private ArrayList<Fridge> fridges;
 		
 		// transition box
 		private ArrayList<Rectangle> boxes;
@@ -50,6 +52,7 @@ public class PlayState2 extends GameState{
 		public void init() {
 			
 			beds = new ArrayList<Bed>();
+			fridges = new ArrayList<Fridge>();
 			
 			// load map
 			tileMap = new TileMap(32);
@@ -65,6 +68,7 @@ public class PlayState2 extends GameState{
 			
 			
 			populateBeds();
+			populateFridges();
 			
 			
 			// initialize players
@@ -102,6 +106,15 @@ public class PlayState2 extends GameState{
 			beds.add(d);
 			
 	}
+		private void populateFridges() {
+			
+			Fridge d;
+			
+			d = new Fridge(tileMap);
+			d.setTilePosition(3, 3);
+			fridges.add(d);
+			
+		}
 		
 		public void update() {
 			
@@ -145,7 +158,19 @@ public class PlayState2 extends GameState{
 				else {
 					hud.notBed();
 				}
-	}
+			}
+			for(int i = 0; i < fridges.size(); i++) {
+				
+				Fridge d = fridges.get(i);
+				d.update();
+				if(players[activePlayer].intersects(d)) {
+					//hud.setEnergy(100);
+					hud.suggestFridge(d.getx(),d.gety(), tileMap.getx(), tileMap.gety());
+				}
+				else {
+					hud.notFridge();
+				}
+			}
 
 
 			
@@ -159,6 +184,9 @@ public class PlayState2 extends GameState{
 			// draw players
 			for (int i=0; i< numPlayableCharacters; i++) {
 				players[i].draw(g);;
+			}
+			for(Fridge d : fridges) {
+				d.draw(g);
 			}
 			for(Bed d : beds) {
 				d.draw(g);
